@@ -311,7 +311,7 @@ if selected == "上傳CSV":
                 st.error("CSV 檔案格式不正確，請確認欄位名稱",icon="⚠️")
                 logger.error(f"[上傳CSV] CSV 檔案格式不正確，{expected_cols} 其中有欄位缺失")
                 st.stop()
-        upload_date = st.date_input("上傳檔案最新的回報日期",df['回報日期'].max(), key='upload_date')
+        upload_date = st.date_input("上傳檔案最新的回報日期",df['已更新'].max(), key='upload_date')
         upload_date = str(upload_date)
         logger.info(f'[上傳CSV] 開始上傳，日期: {upload_date}，檔案名稱: {file.name}')
         
