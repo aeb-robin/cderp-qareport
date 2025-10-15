@@ -12,6 +12,7 @@ DB_HOST = os.getenv("DB_HOST")
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_NAME = os.getenv("DB_NAME")
+TEAM_MEMBERS = os.getenv("TEAM_MEMBERS").split(',')
 
 DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
 mysql_engine = create_engine(DATABASE_URL,
@@ -28,9 +29,7 @@ def daily_results(df):
 
     df = df.fillna('')
     # 各種統計
-    fixed_keys = ['ema.hong', 'Szi', 'weiren.yang', 'yuwei.dee', 
-        'frank.huang', 'jiaying.cai', 'robin.wen', 
-        'david.chen', 'jian.du']
+    fixed_keys = TEAM_MEMBERS
     people_results = {person: {} for person in fixed_keys}
 
     # 新問題

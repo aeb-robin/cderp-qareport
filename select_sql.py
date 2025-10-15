@@ -30,7 +30,7 @@ def search_daily_results(date,logger):
             `important_unprocessed`,
             `external_unprocessed`,
             `under_test`
-        FROM `qa_report`.`daily_results`
+        FROM `daily_results`
         WHERE DATE(`daily_results`.`report_date`) = '{date}'
     '''.format(date=date))
     logger.info(f'[歷史統計查詢-單日統計] 執行 SQL: {sql}') 
@@ -49,7 +49,7 @@ def search_daily_results(date,logger):
 def search_employee_list(logger):
     sql = text('''
         SELECT DISTINCT `employee`
-        FROM `qa_report`.`daily_results`
+        FROM `daily_results`
     ''')
     logger.info(f'[查詢員工列表] 執行 SQL: {sql}')
     session = Session()
@@ -68,9 +68,9 @@ def search_last30days_result(logger):
         SELECT `report_date`, `employee`,
                `new_issues`, `combined_done`, `cumulative_unfinished`,
                `important_unprocessed`, `external_unprocessed`
-        FROM `qa_report`.`daily_results`
+        FROM `daily_results`
         WHERE `report_date` >= (
-            SELECT MAX(`report_date`) FROM `qa_report`.`daily_results`
+            SELECT MAX(`report_date`) FROM `daily_results`
         ) - INTERVAL 30 DAY
     ''')
     logger.info(f'[QA統計圖表] 執行 SQL: {sql}')
@@ -91,7 +91,7 @@ def search_range_results(start_date,end_date,logger):
                `new_issues`, `combined_done`, `cumulative_unfinished`,
                `important_unprocessed`, `external_unprocessed`,
                 `under_test`
-        FROM `qa_report`.`daily_results`
+        FROM `daily_results`
         WHERE `report_date` BETWEEN '{start_date}' AND '{end_date}'
     '''.format(start_date=start_date,end_date=end_date))
     logger.info(f'[歷史統計查詢-區間統計] 執行 SQL: {sql}')
@@ -126,7 +126,7 @@ def export_original_data(logger):
                 `status`,
                 `analysis`,
                 `fixed_version`
-            FROM `qa_report`.`original_data`
+            FROM `original_data`
             ORDER BY `update_date` DESC
         ''')
     logger.info(f'[資料查詢與匯出-原始資料] 執行 SQL: {sql}')
@@ -148,7 +148,7 @@ def export_log_search_data(logger):
                 `timestamp`,
                 `levelname`,
                 `message`
-                FROM `qa_report`.`logs`
+                FROM `logs`
                 ORDER BY `id` DESC
             ''')
     logger.info(f'[資料查詢與匯出-log紀錄] 執行 SQL: {sql}')
