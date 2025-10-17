@@ -294,6 +294,38 @@ if selected == "歷史統計查詢":
 if selected == "上傳CSV":
     st.subheader('上傳CSV')
 
+    with st.container(border=1):
+        # 團隊人員多選區塊
+        col1, col2, col3, col4 = st.columns([7,2,1,1], vertical_alignment='bottom')
+        with col1:
+            team_members = select_sql.get_team_members(logger)
+            member_selector = st.multiselect("請選擇本次上傳的團隊人員", team_members, default=team_members, key='upload_selector')
+        with col2:
+            member_input = st.text_input("新增/刪除團隊人員", key='upload_member_input')
+        with col3:
+            add_member_button = st.button("新增", key='upload_add_member_button', use_container_width=True )
+        with col4:
+            delete_member_button = st.button("刪除", key='upload_delete_member_button', use_container_width=True )
+        if add_member_button:
+            if member_input.strip() == "":
+                st.warning("請輸入團隊人員名稱", icon="⚠️")
+            elif member_input in team_members:
+                st.warning("團隊人員已存在", icon="⚠️")
+            else:
+                upload.add_team_member(member_input, logger)
+                st.success(f"成功新增團隊人員: {member_input}", icon="✅")
+                logger.info(f"[上傳CSV] 成功新增團隊人員: {member_input}")
+        if delete_member_button:
+            if member_input.strip() == "":
+                st.warning("請輸入團隊人員名稱", icon="⚠️")
+            elif member_input not in team_members:
+                st.warning("團隊人員不存在", icon="⚠️")
+            else:
+                upload.delete_team_member(member_input, logger)
+                st.success(f"成功刪除團隊人員: {member_input}", icon="✅")
+                logger.info(f"[上傳CSV] 成功刪除團隊人員: {member_input}")
+
+    # 檔案上傳區塊
     file = st.file_uploader("上傳CSV", ['.csv'],help="請上傳CSV檔案，檔案格式請參考說明文件",key='upload_file_uploader')
     
     if file is not None:
@@ -317,7 +349,7 @@ if selected == "上傳CSV":
         
         with st.spinner("正在處理中，請稍候..."):
             start_time = datetime.now()
-            upload.upload(df,upload_date,logger)
+            upload.upload(df,upload_date,member_selector,logger)
             end_time = datetime.now()
             logger.info(f"[上傳CSV] 成功上傳 {len(df)} 筆資料，耗時 {end_time - start_time}")
             st.success("處理完成！")

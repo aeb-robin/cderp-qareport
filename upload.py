@@ -12,7 +12,7 @@ DB_HOST = os.getenv("DB_HOST")
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_NAME = os.getenv("DB_NAME")
-TEAM_MEMBERS = os.getenv("TEAM_MEMBERS").split(',')
+#TEAM_MEMBERS = os.getenv("TEAM_MEMBERS").split(',')
 
 DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
 mysql_engine = create_engine(DATABASE_URL,
@@ -21,7 +21,7 @@ mysql_engine = create_engine(DATABASE_URL,
                             )
 Session = sessionmaker(bind=mysql_engine)
 
-def daily_results(df):
+def daily_results(df, team_members):
     df['回報日期'] = pd.to_datetime(df['回報日期'], errors='coerce')
     df['已更新'] = pd.to_datetime(df['已更新'], errors='coerce')
 
@@ -29,7 +29,7 @@ def daily_results(df):
 
     df = df.fillna('')
     # 各種統計
-    fixed_keys = TEAM_MEMBERS
+    fixed_keys = team_members
     people_results = {person: {} for person in fixed_keys}
 
     # 新問題
@@ -143,7 +143,7 @@ def insert_daily_results_data(data):
     session.execute(sql)
     session.commit()
 
-def upload(df,date,logger):
+def upload(df,date,team_members,logger):
     df = df.drop(columns= "摘要") 
     df = df.replace(float('nan'), None) # 將 NaN 替換為 None
     #asyncio.run(async_insert_original_data(df,logger))
@@ -160,7 +160,7 @@ def upload(df,date,logger):
     insert_original_data(original_data_dict,logger)
 
 
-    day_results = daily_results(df)
+    day_results = daily_results(df,team_members)
     #asyncio.run(async_insert_daily_results_data(day_results,date))
     for key,value in day_results.items():
         if key == '待測試':
@@ -171,6 +171,46 @@ def upload(df,date,logger):
             #print(daily_data)
         insert_daily_results_data(daily_data)
     return
+
+def add_team_member(member_name, logger):
+    sql = text('''INSERT INTO `team_members`
+                (`name`,
+                 `status`)
+                VALUES ('{}', TRUE)
+                ON DUPLICATE KEY UPDATE
+                status = VALUES(status)
+                '''.format(member_name) )
+
+    session = Session()
+    try:
+        session.execute(sql)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        logger.error(f"[新增團隊成員] 新增失敗: {e}")
+        raise
+    finally:
+        session.close()
+
+def delete_team_member(member_name, logger):
+    sql = text('''UPDATE `team_members`
+                SET `status` = FALSE
+                WHERE `name` = '{}'
+                '''.format(member_name) )
+
+    session = Session()
+    try:
+        session.execute(sql)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        logger.error(f"[刪除團隊成員] 刪除失敗: {e}")
+        raise
+    finally:
+        session.close()
+
+
+
 
 
 #start_time = datetime.now()

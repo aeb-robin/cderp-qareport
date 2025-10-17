@@ -161,3 +161,20 @@ def export_log_search_data(logger):
     df = pd.DataFrame(result)
     df.columns = ['編號', '紀錄時間', '等級', '訊息']
     return df
+
+def get_team_members(logger):
+    sql = text('''
+        SELECT `name`
+        FROM `team_members`
+        WHERE `status` = TRUE
+        ORDER BY `name` ASC
+    ''')
+    logger.info(f'[取得團隊成員列表] 執行 SQL: {sql}')
+    session = Session()
+    result = session.execute(sql)
+    session.commit()
+    result = result.fetchall()
+    if result == []:
+        return []
+    team_members = [row[0] for row in result]
+    return team_members
