@@ -146,7 +146,6 @@ def insert_daily_results_data(data):
 def upload(df,date,team_members,logger):
     df = df.drop(columns= "摘要") 
     df = df.replace(float('nan'), None) # 將 NaN 替換為 None
-    #asyncio.run(async_insert_original_data(df,logger))
     rows = df.values
     original_data = [row.tolist() for row in rows]
     
@@ -161,14 +160,11 @@ def upload(df,date,team_members,logger):
 
 
     day_results = daily_results(df,team_members)
-    #asyncio.run(async_insert_daily_results_data(day_results,date))
     for key,value in day_results.items():
         if key == '待測試':
             daily_data = [key, date, 0, 0, 0, 0, 0, value['新問題']]
-            #print(daily_data)
         else:
             daily_data = [key, date] + list(value.values()) + [0]
-            #print(daily_data)
         insert_daily_results_data(daily_data)
     return
 
@@ -212,8 +208,3 @@ def delete_team_member(member_name, logger):
 
 
 
-
-#start_time = datetime.now()
-#end_time = datetime.now()
-#logger.info(f"成功插入 {len(data_dict)} 筆資料，耗時 {end_time - start_time}")
-#logger.error(f"批次插入失敗: {e}")

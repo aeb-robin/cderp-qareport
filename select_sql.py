@@ -41,7 +41,6 @@ def search_daily_results(date,logger):
     if result == []:
         return
     df = pd.DataFrame(result)
-    #print(f'result: {result}')
     df.columns = ['員工','新問題','今日完成','累積未完成','重要未處理','外部未處理','待測試']
     
     return df
@@ -60,7 +59,6 @@ def search_employee_list(logger):
     if result == []:
         return
     employee_list = [i[0] for i in result if i[0] != '待測試']
-    #print(f'employee_list: {employee_list}')
     return employee_list
 
 def search_last30days_result(logger):
@@ -82,7 +80,6 @@ def search_last30days_result(logger):
         return
     df = pd.DataFrame(result)
     df.columns = ['回報日期', '員工', '新問題', '每日完成', '累積未完成', '重要未處理', '外部未處理']
-    #print(f'df: {df}')
     return df
 
 def search_range_results(start_date,end_date,logger):
@@ -103,7 +100,6 @@ def search_range_results(start_date,end_date,logger):
         return
     df = pd.DataFrame(result)
     df.columns = ['回報日期', '員工', '新問題', '每日完成', '累積未完成', '重要未處理', '外部未處理','待測試']
-    #print(df)
     return df
 
 def export_original_data(logger):

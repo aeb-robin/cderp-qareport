@@ -36,11 +36,8 @@ if not logger.handlers:
         print(f"無法建立資料庫日誌處理器: {e}")
         st.error("無法建立資料庫日誌處理器，請檢查資料庫連線設定", icon="⚠️")
         st.stop()
-    #file_handler = logging.FileHandler(r'C:\Users\ananb\OneDrive\Desktop\新增資料夾\app.log')
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    #file_handler.setFormatter(formatter)
     sqlalchemy_handler.setFormatter(formatter)
-    #logger.addHandler(file_handler)
     logger.addHandler(sqlalchemy_handler) # 加到 logger 上
 
 
@@ -130,7 +127,6 @@ if selected == "QA統計圖表":
     category_df = pd.DataFrame(columns=['category','color'])
     category_df['category'] = ['每日完成', '累積未完成', '新問題', '重要未處理', '外部未處理']
     category_df['color'] = ['#83c9ff','#ffabab','#ff2b2b','#7defa1','#0066cc']
-    #print(category_df)
     if df_30 is None:
         st.error("查無資料，請確認是否已上傳資料",icon="⚠️")
         logger.error(f"[QA統計圖表]查無資料，請確認是否已上傳資料")
@@ -477,11 +473,3 @@ if selected == "資料查詢與匯出":
     export_data_tab2()
 
  
-
-
-#代辦事項:
-#1.原始資料查詢邏輯 Done
-#2.log紀錄查詢與匯出 Done
-#3.匯入匯出紀錄、批次結果、錯誤紀錄、查詢紀錄、效能監控的log紀錄 Done
-#4.刪除資料庫資料，重新確認上傳邏輯是否正常 Done
-#5.紀錄系統出錯時的log紀錄
