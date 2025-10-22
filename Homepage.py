@@ -111,7 +111,19 @@ with st.sidebar:
 
 #首頁  QA統計圖表
 if selected == "QA統計圖表":
-    st.markdown('## QA統計圖表')
+    col1, col2 = st.columns([8,1], vertical_alignment='bottom', width='stretch')
+    with col1:
+        st.markdown('## QA統計圖表')
+    with col2:
+        with st.popover("ℹ️"):
+            st.write("QA回報統計說明：")
+            st.write("新問題 ｢統計給\"分配給\"｣：狀態為已分配，回報日期為今天")
+            st.write("今日完成 ｢統計給\"回報人\"｣：狀態為已測試，更新日期為今日")
+            st.write("今日完成 ｢統計給\"分配給\"｣：狀態為待測試，更新日期為今日")
+            st.write("累積未完成 ｢統計給\"分配給\"｣：狀態為已分配")
+            st.write("重要未處理 ｢統計給\"分配給\"｣：狀態為已分配，嚴重性為重要")
+            st.write("外部未處理 ｢統計給\"分配給\"｣：狀態為已分配，類別為HAPCS疾管署_愛滋追管系統")
+            
     st.markdown('''
     <style>.stVerticalBlock{
     overflow: hidden;
@@ -277,7 +289,19 @@ def history_statistics_tab2(employee_list):
                 logger.info(f"[歷史統計查詢-區間統計] 成功查詢 {start_date} ~ {end_date} 的統計結果，耗時 {end_time - start_time}")
 
 if selected == "歷史統計查詢":
-    st.subheader('歷史統計查詢')
+    col1, col2 = st.columns([8,1], vertical_alignment='bottom', width='stretch')
+    with col1:
+        st.subheader('歷史統計查詢')
+    with col2:
+        with st.popover("ℹ️"):
+            st.write("QA回報統計說明：")
+            st.write("新問題 ｢統計給\"分配給\"｣：狀態為已分配，回報日期為今天")
+            st.write("今日完成 ｢統計給\"回報人\"｣：狀態為已測試，更新日期為今日")
+            st.write("今日完成 ｢統計給\"分配給\"｣：狀態為待測試，更新日期為今日")
+            st.write("累積未完成 ｢統計給\"分配給\"｣：狀態為已分配")
+            st.write("重要未處理 ｢統計給\"分配給\"｣：狀態為已分配，嚴重性為重要")
+            st.write("外部未處理 ｢統計給\"分配給\"｣：狀態為已分配，類別為HAPCS疾管署_愛滋追管系統")
+    
 
     employee_list = select_sql.search_employee_list(logger)
     tab1, tab2 = st.tabs(["單日統計", "區間統計(不可超過3個月)"])
@@ -295,7 +319,7 @@ if selected == "上傳CSV":
         col1, col2, col3, col4 = st.columns([7,2,1,1], vertical_alignment='bottom')
         with col1:
             team_members = select_sql.get_team_members(logger)
-            member_selector = st.multiselect("請選擇本次上傳的團隊人員", team_members, default=team_members, key='upload_selector')
+            member_selector = st.multiselect("請選擇本次上傳的團隊人員", team_members, default=team_members, key='upload_selector' ,disabled=True)
         with col2:
             member_input = st.text_input("新增/刪除團隊人員", key='upload_member_input')
         with col3:
@@ -311,6 +335,7 @@ if selected == "上傳CSV":
                 upload.add_team_member(member_input, logger)
                 st.success(f"成功新增團隊人員: {member_input}", icon="✅")
                 logger.info(f"[上傳CSV] 成功新增團隊人員: {member_input}")
+            st.rerun()
         if delete_member_button:
             if member_input.strip() == "":
                 st.warning("請輸入團隊人員名稱", icon="⚠️")
